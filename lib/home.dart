@@ -22,6 +22,8 @@ class _HomePageState extends State<HomePage> {
   int _imageWidth = 0;
   String _model = "";
   String title = "None detection";
+  double sx = 0;
+  double sy = 0;
 
   @override
   void initState() {
@@ -110,8 +112,8 @@ class _HomePageState extends State<HomePage> {
                 // ),
                 GestureDetector(
                   onTapDown: (TapDownDetails details) {
-                    var x = details.globalPosition.dx;
-                    var y = details.globalPosition.dy;
+                    var cx = details.globalPosition.dx;
+                    var cy = details.globalPosition.dy;
                     // or user the local position method to get the offset
                     int previewH = math.max(_imageHeight, _imageWidth);
                     int previewW = math.min(_imageHeight, _imageWidth);
@@ -119,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                     double screenW = screen.width;
 
                     String result = "None detection";
-                    double distance;
+                    double distance = screenW + screenH;
                     for (int i = 0; i < _recognitions.length; i++) {
                       var _x = _recognitions[i]["rect"]["x"];
                       var _y = _recognitions[i]["rect"]["y"];
@@ -147,28 +149,40 @@ class _HomePageState extends State<HomePage> {
                       }
                       var xi = x + w;
                       var yi = y + h;
-                      print(x.toString() +
-                          ',' +
-                          y.toString() +
-                          ',' +
-                          xi.toString() +
-                          ',' +
-                          yi.toString());
-                      // if(x.toDouble()>)
+                      // print(x.toString() +
+                      //     ',' +
+                      //     y.toString() +
+                      //     ',' +
+                      //     xi.toString() +
+                      //     ',' +
+                      //     yi.toString());
+                      if (cx.toDouble() > x &&
+                          cx.toDouble() < xi &&
+                          cy.toDouble() > y &&
+                          cy.toDouble() < yi) {
+                        if (distance > w + h) {
+                          distance = w + h;
+                          result = _recognitions[i]["detectedClass"];
+                        }
+                      }
                     }
                     setState(() {
-                      title = x.toString();
+                      title = result;
+                      sx = cx.toDouble();
+                      sy = cy.toDouble();
                     });
                     // print(x.toString() + ", " + y.toString());
                   },
-                  //   child: BndBox(
-                  //     _recognitions == null ? [] : _recognitions,
-                  //     math.max(_imageHeight, _imageWidth),
-                  //     math.min(_imageHeight, _imageWidth),
-                  //     screen.height,
-                  //     screen.width,
-                  //     _model,
-                  //   ),
+                  child: BndBox(
+                    _recognitions == null ? [] : _recognitions,
+                    math.max(_imageHeight, _imageWidth),
+                    math.min(_imageHeight, _imageWidth),
+                    screen.height,
+                    screen.width,
+                    _model,
+                    sx,
+                    sy,
+                  ),
                 ),
               ],
             ),
