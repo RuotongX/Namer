@@ -1,4 +1,7 @@
-For details: https://medium.com/@shaqian629/real-time-object-detection-in-flutter-b31c7ff9ef96
+# Namer
+
+A object detection application designed for childeren
+![](first.jpg) 
 
 # flutter_realtime_detection
 
@@ -18,17 +21,17 @@ flutter run
 
 ## Models
 
-- Image Classification
-  - MobileNet
-
 - Object Detection
   - SSD MobileNet
-  - Yolov2 Tiny
-
-- Pose Estimation 
-  - PoseNet
 
 ## Previews
 
-![](preview.jpg) 
+![](solopi.jpg) 
+
+## SoloPi test result
+
+![](preview.MP4) 
+
+Thanks for object detecting examples from:
+https://medium.com/@shaqian629/real-time-object-detection-in-flutter-b31c7ff9ef96.
 
