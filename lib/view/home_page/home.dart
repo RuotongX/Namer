@@ -2,12 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:tflite/tflite.dart';
 import 'dart:math' as math;
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:namer/view/home_page/home_bloc.dart';
 
 import 'camera.dart';
 import 'bndbox.dart';
 import 'models.dart';
 
 class HomePage extends StatefulWidget {
+  static const String routeName = '/';
+
+  static Route route() {
+    List<CameraDescription>? cameras;
+    return MaterialPageRoute(
+        settings: RouteSettings(name: routeName),
+        builder: (_) => HomePage(cameras!));
+  }
+
   final List<CameraDescription> cameras;
 
   HomePage(this.cameras);
@@ -17,7 +28,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<dynamic> _recognitions;
+  List<dynamic>? _recognitions;
   int _imageHeight = 0;
   int _imageWidth = 0;
   String _model = "";
@@ -35,9 +46,9 @@ class _HomePageState extends State<HomePage> {
     _model = ssd;
     switch (_model) {
       default:
-        res = await Tflite.loadModel(
+        res = (await Tflite.loadModel(
             model: "assets/ssd_mobilenet.tflite",
-            labels: "assets/ssd_mobilenet.txt");
+            labels: "assets/ssd_mobilenet.txt"))!;
     }
     print(res);
   }
@@ -65,7 +76,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.blueGrey,
       appBar: AppBar(
         toolbarHeight: 100,
         centerTitle: true,
@@ -79,25 +90,51 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Color(0x44000000),
         elevation: 1,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Setting',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Favorite',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_books),
-            label: 'Library',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        backgroundColor: Color(0x44000000),
+      bottomNavigationBar: BottomAppBar(
+        color: Color(0x44000000),
         elevation: 1,
-        selectedItemColor: Colors.amber[800],
+        child: SizedBox(
+            height: 70,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  tooltip: 'Setting',
+                  icon: Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/Setting');
+                  },
+                ),
+                IconButton(
+                  tooltip: 'Favorite',
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    // Navigator.pushNamed(context, '/kidProfile');
+                  },
+                ),
+                IconButton(
+                  tooltip: 'Library',
+                  icon: Icon(Icons.library_books),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/Library');
+                  },
+                ),
+              ],
+            )),
+        // items: const <BottomNavigationBarItem>[
+        //   BottomNavigationBarItem(
+        //     icon: Icon(Icons.settings),
+        //     label: 'Setting',
+        //   ),
+        //   BottomNavigationBarItem(
+        //     icon: Icon(Icons.add),
+        //     label: 'Favorite',
+        //   ),
+        //   BottomNavigationBarItem(
+        //     icon: Icon(Icons.library_books),
+        //     label: 'Library',
+        //   ),
+        // ],
 
         // onTap: _onItemTapped,
       ),
@@ -105,11 +142,11 @@ class _HomePageState extends State<HomePage> {
           ? Center()
           : Stack(
               children: [
-                // Camera(
-                //   widget.cameras,
-                //   _model,
-                //   setRecognitions,
-                // ),
+                Camera(
+                  widget.cameras,
+                  _model,
+                  setRecognitions,
+                ),
                 GestureDetector(
                   onTapDown: (TapDownDetails details) {
                     var cx = details.globalPosition.dx;
@@ -122,11 +159,11 @@ class _HomePageState extends State<HomePage> {
 
                     String result = "None detection";
                     double distance = screenW + screenH;
-                    for (int i = 0; i < _recognitions.length; i++) {
-                      var _x = _recognitions[i]["rect"]["x"];
-                      var _y = _recognitions[i]["rect"]["y"];
-                      var _w = _recognitions[i]["rect"]["w"];
-                      var _h = _recognitions[i]["rect"]["h"];
+                    for (int i = 0; i < _recognitions!.length; i++) {
+                      var _x = _recognitions![i]["rect"]["x"];
+                      var _y = _recognitions![i]["rect"]["y"];
+                      var _w = _recognitions![i]["rect"]["w"];
+                      var _h = _recognitions![i]["rect"]["h"];
                       var scaleW, scaleH, x, y, w, h;
                       if (screenH / screenW > previewH / previewW) {
                         scaleW = screenH / previewH * previewW;
@@ -162,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                           cy.toDouble() < yi) {
                         if (distance > w + h) {
                           distance = w + h;
-                          result = _recognitions[i]["detectedClass"];
+                          result = _recognitions![i]["detectedClass"];
                         }
                       }
                     }
@@ -174,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                     // print(x.toString() + ", " + y.toString());
                   },
                   child: BndBox(
-                    _recognitions == null ? [] : _recognitions,
+                    _recognitions == null ? [] : _recognitions!,
                     math.max(_imageHeight, _imageWidth),
                     math.min(_imageHeight, _imageWidth),
                     screen.height,
