@@ -1,7 +1,7 @@
 # Namer
 
 A object detection application designed for childeren
-![](first.jpg) 
+![](first.png) 
 
 # flutter_realtime_detection
 
@@ -26,11 +26,12 @@ flutter run
 
 ## Previews
 
-![](solopi.jpg) 
+![](preview.PNG) 
 
 ## SoloPi test result
 
-![](preview.MP4) 
+![](solopi.jpg) 
+
 
 Thanks for object detecting examples from:
 https://medium.com/@shaqian629/real-time-object-detection-in-flutter-b31c7ff9ef96.
