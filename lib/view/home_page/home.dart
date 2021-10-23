@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<dynamic> _recognitions;
+  List<dynamic>? _recognitions;
   int _imageHeight = 0;
   int _imageWidth = 0;
   String _model = "";
@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   loadModel() async {
-    String res;
+    String? res;
     _model = ssd;
     switch (_model) {
       default:
@@ -122,11 +122,11 @@ class _HomePageState extends State<HomePage> {
 
                     String result = "None detection";
                     double distance = screenW + screenH;
-                    for (int i = 0; i < _recognitions.length; i++) {
-                      var _x = _recognitions[i]["rect"]["x"];
-                      var _y = _recognitions[i]["rect"]["y"];
-                      var _w = _recognitions[i]["rect"]["w"];
-                      var _h = _recognitions[i]["rect"]["h"];
+                    for (int i = 0; i < _recognitions!.length; i++) {
+                      var _x = _recognitions![i]["rect"]["x"];
+                      var _y = _recognitions![i]["rect"]["y"];
+                      var _w = _recognitions![i]["rect"]["w"];
+                      var _h = _recognitions![i]["rect"]["h"];
                       var scaleW, scaleH, x, y, w, h;
                       if (screenH / screenW > previewH / previewW) {
                         scaleW = screenH / previewH * previewW;
@@ -162,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                           cy.toDouble() < yi) {
                         if (distance > w + h) {
                           distance = w + h;
-                          result = _recognitions[i]["detectedClass"];
+                          result = _recognitions![i]["detectedClass"];
                         }
                       }
                     }
@@ -174,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                     // print(x.toString() + ", " + y.toString());
                   },
                   child: BndBox(
-                    _recognitions == null ? [] : _recognitions,
+                    _recognitions == null ? [] : _recognitions!,
                     math.max(_imageHeight, _imageWidth),
                     math.min(_imageHeight, _imageWidth),
                     screen.height,

@@ -19,7 +19,7 @@ class Camera extends StatefulWidget {
 }
 
 class _CameraState extends State<Camera> {
-  CameraController controller;
+  CameraController? controller;
   bool isDetecting = false;
 
   @override
@@ -33,13 +33,13 @@ class _CameraState extends State<Camera> {
         widget.cameras[0],
         ResolutionPreset.high,
       );
-      controller.initialize().then((_) {
+      controller!.initialize().then((_) {
         if (!mounted) {
           return;
         }
         setState(() {});
 
-        controller.startImageStream((CameraImage img) {
+        controller!.startImageStream((CameraImage img) {
           if (!isDetecting) {
             isDetecting = true;
 
@@ -57,7 +57,7 @@ class _CameraState extends State<Camera> {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
                 print("Detection took ${endTime - startTime}");
 
-                widget.setRecognitions(recognitions, img.height, img.width);
+                widget.setRecognitions(recognitions!, img.height, img.width);
 
                 isDetecting = false;
               });
@@ -73,7 +73,7 @@ class _CameraState extends State<Camera> {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
                 print("Detection took ${endTime - startTime}");
 
-                widget.setRecognitions(recognitions, img.height, img.width);
+                widget.setRecognitions(recognitions!, img.height, img.width);
 
                 isDetecting = false;
               });
@@ -93,7 +93,7 @@ class _CameraState extends State<Camera> {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
                 print("Detection took ${endTime - startTime}");
 
-                widget.setRecognitions(recognitions, img.height, img.width);
+                widget.setRecognitions(recognitions!, img.height, img.width);
 
                 isDetecting = false;
               });
@@ -112,14 +112,14 @@ class _CameraState extends State<Camera> {
 
   @override
   Widget build(BuildContext context) {
-    if (controller == null || !controller.value.isInitialized) {
+    if (controller == null || !controller!.value.isInitialized) {
       return Container();
     }
 
     var tmp = MediaQuery.of(context).size;
     var screenH = math.max(tmp.height, tmp.width);
     var screenW = math.min(tmp.height, tmp.width);
-    tmp = controller.value.previewSize;
+    tmp = controller!.value.previewSize!;
     var previewH = math.max(tmp.height, tmp.width);
     var previewW = math.min(tmp.height, tmp.width);
     var screenRatio = screenH / screenW;
@@ -130,7 +130,7 @@ class _CameraState extends State<Camera> {
           screenRatio > previewRatio ? screenH : screenW / previewW * previewH,
       maxWidth:
           screenRatio > previewRatio ? screenH / previewH * previewW : screenW,
-      child: CameraPreview(controller),
+      child: CameraPreview(controller!),
     );
   }
 }
